@@ -1,4 +1,5 @@
-"""This module contains some utilty functions.
+"""
+This module contains some utilty functions.
 """
 
 import logging
@@ -6,7 +7,8 @@ import logging.handlers
 import os
 
 def configure_rolling_logger(log_filename):
-    """Configures a midnight rolling log file with the provided file name.
+    """
+    Configures a midnight rolling log file with the provided file name.
 
     Args:
         log_filename (str): an absolute path file name
@@ -14,6 +16,7 @@ def configure_rolling_logger(log_filename):
     Returns:
         logger: the root logger that was configured
     """
+
     file_path, _ = os.path.split(log_filename)
 
     if not os.path.exists(file_path):
@@ -32,4 +35,3 @@ def configure_rolling_logger(log_filename):
     logger.addHandler(handler)
 
     return logger
-
