@@ -9,5 +9,5 @@ rm $(find option_pricer -name \*\.pyc)
 
 source venv/bin/activate
 
-nosetests option_pricer.test.unit
+nosetests "$@"
 

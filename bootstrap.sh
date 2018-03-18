@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# uncomment this if you need to install virtualenv
-# pip install virtualenv
-
-# create a virtual environment in case special packages are needed
+# create a virtual environment
 rm -rf venv
-virtualenv venv
+python3 -m venv venv
 source venv/bin/activate
 
 # these packages will be installed to the venv, and will not affect the system at large
 pip install pylint
 pip install nose
 pip install mock
-
+pip install pyyaml
+pip install requests
+pip install requests-mock
