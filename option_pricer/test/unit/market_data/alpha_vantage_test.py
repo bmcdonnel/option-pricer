@@ -2,10 +2,13 @@
 Alpha Vantage market data test module.
 """
 
+from datetime import datetime, timedelta
+
 import unittest
 import requests_mock
 
 from option_pricer.market_data import alpha_vantage
+from option_pricer.market_data.quote import Quote, TimeSeriesQuote
 
 class TestAlphaVantage(unittest.TestCase):
     """
@@ -29,7 +32,7 @@ class TestAlphaVantage(unittest.TestCase):
     @requests_mock.mock()
     def test_get_quote_successful(self, request_mock):
         """
-        Test the get_quote() functionality.
+        Test get_quote() functionality when the request is successful.
         """
         request_mock.get(
             alpha_vantage.URL + "function={0}&symbols={1}&apikey={2}".format(
@@ -40,9 +43,91 @@ class TestAlphaVantage(unittest.TestCase):
             status_code=200,
             json={
                 "Stock Quotes": [
-                    {"2. price" : "100.00"},
+                    {
+                        "2. price" : "100.00",
+                        "4. timestamp" : "2018-03-16 15:59:59"
+                    },
                 ]
             }
         )
 
-        self.assertEqual(alpha_vantage.get_quote("TSLA"), 100.0)
+        self.assertEqual(
+            alpha_vantage.get_quote("TSLA"),
+            Quote(datetime(2018, 3, 16, 15, 59, 59), 100.0)
+        )
+
+    @requests_mock.mock()
+    def test_get_quote_failure(self, request_mock):
+        """
+        Test get_quote() functionality when the request fails.
+        """
+
+        request_mock.get(
+            alpha_vantage.URL + "function={0}&symbols={1}&apikey={2}".format(
+                "BATCH_STOCK_QUOTES",
+                "TSLA",
+                alpha_vantage.API_KEY,
+            ),
+            status_code=500,
+        )
+
+        with self.assertRaises(Exception):
+            alpha_vantage.get_quote("TSLA")
+
+    @requests_mock.mock()
+    def test_get_intraday_time_series(self, request_mock):
+        """
+        Test get_intraday_time_series() when the request is successful.
+        """
+
+        request_mock.get(
+            alpha_vantage.URL + "function={0}&symbols={1}&interval={2}&apikey={3}".format(
+                "TIME_SERIES_INTRADAY",
+                "MSFT",
+                "1min",
+                alpha_vantage.API_KEY,
+            ),
+            status_code=200,
+            json={
+                "Time Series (1min)": {
+                    "2018-03-16 15:54:00" : {
+                        "1. open:"   : "94.5000",
+                        "2. high:"   : "94.5600",
+                        "3. low:"    : "94.4500",
+                        "4. close:"  : "94.5000",
+                        "5. volume:" : "221592",
+                    },
+                    "2018-03-16 15:53:00" : {
+                        "1. open:"   : "94.5000",
+                        "2. high:"   : "94.6200",
+                        "3. low:"    : "94.5000",
+                        "4. close:"  : "94.6101",
+                        "5. volume:" : "324491",
+                    },
+                }
+            }
+        )
+
+        time_series = alpha_vantage.get_intraday_time_series(
+            "MSFT",
+            alpha_vantage.IntradayQuoteInterval.ONE_MINUTE
+        )
+
+        dt1 = datetime(2018, 3, 16, 15, 54, 00)
+        dt2 = datetime(2018, 3, 16, 15, 53, 00)
+
+        self.assertEqual(
+            time_series,
+            [
+                TimeSeriesQuote(
+                    dt1,
+                    dt1 + timedelta(minutes=1),
+                    94.5, 94.56, 94.45, 94.5, 221592
+                ),
+                TimeSeriesQuote(
+                    dt2,
+                    dt2 + timedelta(minutes=1),
+                    94.5, 94.62, 94.5, 94.6101, 324491
+                ),
+            ]
+        )
