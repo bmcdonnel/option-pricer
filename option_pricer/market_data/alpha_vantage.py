@@ -24,6 +24,9 @@ class IntradayQuoteInterval(Enum):
     SIXTY_MINUTES = "60min"
 
     def duration(self):
+        """
+        Converts an IntradayQuoteInterval into a datetime.timedelta.
+        """
         return {
             IntradayQuoteInterval.ONE_MINUTE:      timedelta(minutes=1),
             IntradayQuoteInterval.FIVE_MINUTES:    timedelta(minutes=5),
@@ -31,6 +34,18 @@ class IntradayQuoteInterval(Enum):
             IntradayQuoteInterval.THIRTY_MINUTES:  timedelta(minutes=30),
             IntradayQuoteInterval.SIXTY_MINUTES:   timedelta(minutes=60),
         }.get(self)
+
+class TimeSeriesOutputSize(Enum):
+    """
+    An enumeration of time series output sizes for use with daily, weekly, and monthly
+    time series calls.
+
+    COMPACT: 100 data points
+    FULL: as many data points as available
+    """
+
+    COMPACT = "compact"
+    FULL = "full"
 
 def get_quote(symbol):
     """
@@ -78,8 +93,42 @@ def get_intraday_time_series(symbol, interval):
 
     key = "Time Series ({0})".format(interval.value)
     series = response.json()[key]
+    duration = interval.duration()
+    transform = lambda k: datetime.strptime(k, "%Y-%m-%d %H:%M:%S")
 
-    return [_time_series_quote_from_json(k, v, interval) for k, v in series.items()]
+    return [_time_series_quote_from_json(transform(k), v, duration) for k, v in series.items()]
+
+def get_daily_time_series(symbol, output_size):
+    """
+    For the given symbol, get a time series of prices for the current (or
+    most recent) trading day with the specified output size.
+
+    Arguments:
+        symbol (str): the desired symbol
+        output_size (TimeSeriesOutputSize): the desired output size for the time series
+    """
+
+    if not isinstance(output_size, TimeSeriesOutputSize):
+        raise ValueError(
+            "output_size '{0}' is not a valid TimeSeriesOutputSize".format(
+                output_size
+            )
+        )
+
+    query_string = "function={0}&symbols={1}&outputsize={2}&apikey={3}".format(
+        "TIME_SERIES_DAILY",
+        symbol,
+        output_size.value,
+        API_KEY,
+    )
+
+    response = _send_get(query_string)
+
+    series = response.json()["Time Series (Daily)"]
+    duration = timedelta(hours=24)
+    transform = lambda k: datetime.strptime(k, "%Y-%m-%d")
+
+    return [_time_series_quote_from_json(transform(k), v, duration) for k, v in series.items()]
 
 def _send_get(query_string):
     """
@@ -102,17 +151,16 @@ def _quote_from_json(json):
 
     return Quote(timestamp, price)
 
-def _time_series_quote_from_json(timestamp, json, interval):
-    timestamp   = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
-    open_price  = float(json["1. open:"])
-    high_price  = float(json["2. high:"])
-    low_price   = float(json["3. low:"])
+def _time_series_quote_from_json(timestamp, json, duration):
+    open_price = float(json["1. open:"])
+    high_price = float(json["2. high:"])
+    low_price = float(json["3. low:"])
     close_price = float(json["4. close:"])
-    volume      = float(json["5. volume:"])
+    volume = float(json["5. volume:"])
 
     return TimeSeriesQuote(
         timestamp,
-        timestamp + interval.duration(),
+        timestamp + duration,
         open_price,
         high_price,
         low_price,

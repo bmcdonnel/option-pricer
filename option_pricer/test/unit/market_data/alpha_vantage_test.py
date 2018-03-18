@@ -131,3 +131,61 @@ class TestAlphaVantage(unittest.TestCase):
                 ),
             ]
         )
+
+    @requests_mock.mock()
+    def test_get_daily_time_series(self, request_mock):
+        """
+        Test get_daily_time_series() when the request is successful.
+        """
+
+        request_mock.get(
+            alpha_vantage.URL + "function={0}&symbols={1}&outputsize={2}&apikey={3}".format(
+                "TIME_SERIES_DAILY",
+                "MSFT",
+                "compact",
+                alpha_vantage.API_KEY,
+            ),
+            status_code=200,
+            json={
+                "Time Series (Daily)": {
+                    "2018-03-16" : {
+                        "1. open:"   : "94.6800",
+                        "2. high:"   : "95.3800",
+                        "3. low:"    : "93.9200",
+                        "4. close:"  : "94.6000",
+                        "5. volume:" : "47329521",
+                    },
+                    "2018-03-15" : {
+                        "1. open:"   : "93.5300",
+                        "2. high:"   : "94.5800",
+                        "3. low:"    : "92.8300",
+                        "4. close:"  : "94.1800",
+                        "5. volume:" : "26279014",
+                    },
+                }
+            }
+        )
+
+        time_series = alpha_vantage.get_daily_time_series(
+            "MSFT",
+            alpha_vantage.TimeSeriesOutputSize.COMPACT
+        )
+
+        dt1 = datetime(2018, 3, 16)
+        dt2 = datetime(2018, 3, 15)
+
+        self.assertEqual(
+            time_series,
+            [
+                TimeSeriesQuote(
+                    dt1,
+                    dt1 + timedelta(hours=24),
+                    94.68, 95.38, 93.92, 94.6, 47329521
+                ),
+                TimeSeriesQuote(
+                    dt2,
+                    dt2 + timedelta(hours=24),
+                    93.53, 94.58, 92.83, 94.18, 26279014
+                ),
+            ]
+        )
