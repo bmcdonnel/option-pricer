@@ -9,7 +9,8 @@ There are multiple variants of binomial pricing models, each differing in its de
 
 # TODO
 - More logging
-- Cox-Russ-Rubinstein implementation
+- Cox-Russ-Rubinstein implementation tree calcs
 - Jarrow-Rudd implementation
+- US Treasury rate API?
 - GUI for displaying the tree?
 - Postgres data store for tracking model runs?

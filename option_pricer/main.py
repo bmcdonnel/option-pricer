@@ -7,8 +7,9 @@ Attributes:
 
 import argparse
 import os
-
 from datetime import datetime
+
+import option_pricer.modeling.binomial as binomial
 from option_pricer import utils
 
 LOG_PATH = "logs"
@@ -16,7 +17,7 @@ LOG_PATH = "logs"
 str: The path where the log file is stored.
 """
 
-BINOMIAL_VARIANTS = ["crr", "jr"]
+BINOMIAL_VARIANTS = ["CRR", "JR"]
 """
 list: Currently supported binomial pricing model variants
 """
@@ -43,8 +44,8 @@ def valid_type(type_string):
     type_string (str): the input string
     """
 
-    if type_string.lower() in ["p", "c"]:
-        return type_string.lower()
+    if type_string.upper() in ["P", "C"]:
+        return type_string.upper()
     else:
         message = "Invalid type string: '{0}'".format(type_string)
         raise argparse.ArgumentTypeError(message)
@@ -57,8 +58,8 @@ def valid_variant(variant_string):
     variant_string (str): the input string
     """
 
-    if variant_string.lower() in BINOMIAL_VARIANTS:
-        return variant_string.lower()
+    if variant_string.upper() in BINOMIAL_VARIANTS:
+        return variant_string.upper()
     else:
         message = "Invalid variant string: '{0}'".format(variant_string)
         raise argparse.ArgumentTypeError(message)
@@ -107,18 +108,21 @@ def parse_arguments():
     parser.add_argument(
         "--steps",
         type=int,
+        default=100,
         help="The number of time steps to calculate"
     )
 
     parser.add_argument(
         "--size",
         type=float,
+        default=0.01,
         help="The size of the time steps"
     )
 
     parser.add_argument(
         "--variant",
         type=valid_variant,
+        default="crr",
         help="The binomial model variant to use: {0}".format(BINOMIAL_VARIANTS)
     )
 
@@ -129,9 +133,27 @@ def main():
     This is the main function.
     """
 
-    parse_arguments()
+    args = parse_arguments()
 
     utils.configure_rolling_logger(os.path.join(LOG_PATH, "application.log"))
+
+    model_class = {
+        "CRR": binomial.CoxRussRubinstein,
+        "JR": binomial.JarrowRudd,
+    }.get(args.variant)
+
+    model = model_class(
+        args.rate,
+        args.steps,
+        args.size,
+    )
+
+    model.price_contract(
+        args.underlying,
+        args.expiration,
+        args.type,
+        args.strike,
+    )
 
 if __name__ == "__main__":
     main()
