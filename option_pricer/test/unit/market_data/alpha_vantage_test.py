@@ -81,7 +81,7 @@ class TestAlphaVantage(unittest.TestCase):
         """
 
         request_mock.get(
-            alpha_vantage.URL + "function={0}&symbols={1}&interval={2}&apikey={3}".format(
+            alpha_vantage.URL + "function={0}&symbol={1}&interval={2}&apikey={3}".format(
                 "TIME_SERIES_INTRADAY",
                 "MSFT",
                 "1min",
@@ -91,18 +91,18 @@ class TestAlphaVantage(unittest.TestCase):
             json={
                 "Time Series (1min)": {
                     "2018-03-16 15:54:00" : {
-                        "1. open:"   : "94.5000",
-                        "2. high:"   : "94.5600",
-                        "3. low:"    : "94.4500",
-                        "4. close:"  : "94.5000",
-                        "5. volume:" : "221592",
+                        "1. open"   : "94.5000",
+                        "2. high"   : "94.5600",
+                        "3. low"    : "94.4500",
+                        "4. close"  : "94.5000",
+                        "5. volume" : "221592",
                     },
                     "2018-03-16 15:53:00" : {
-                        "1. open:"   : "94.5000",
-                        "2. high:"   : "94.6200",
-                        "3. low:"    : "94.5000",
-                        "4. close:"  : "94.6101",
-                        "5. volume:" : "324491",
+                        "1. open"   : "94.5000",
+                        "2. high"   : "94.6200",
+                        "3. low"    : "94.5000",
+                        "4. close"  : "94.6101",
+                        "5. volume" : "324491",
                     },
                 }
             }
@@ -133,13 +133,13 @@ class TestAlphaVantage(unittest.TestCase):
         )
 
     @requests_mock.mock()
-    def test_get_daily_time_series(self, request_mock):
+    def test_get_daily_valid(self, request_mock):
         """
         Test get_daily_time_series() when the request is successful.
         """
 
         request_mock.get(
-            alpha_vantage.URL + "function={0}&symbols={1}&outputsize={2}&apikey={3}".format(
+            alpha_vantage.URL + "function={0}&symbol={1}&outputsize={2}&apikey={3}".format(
                 "TIME_SERIES_DAILY",
                 "MSFT",
                 "compact",
@@ -149,18 +149,18 @@ class TestAlphaVantage(unittest.TestCase):
             json={
                 "Time Series (Daily)": {
                     "2018-03-16" : {
-                        "1. open:"   : "94.6800",
-                        "2. high:"   : "95.3800",
-                        "3. low:"    : "93.9200",
-                        "4. close:"  : "94.6000",
-                        "5. volume:" : "47329521",
+                        "1. open"   : "94.6800",
+                        "2. high"   : "95.3800",
+                        "3. low"    : "93.9200",
+                        "4. close"  : "94.6000",
+                        "5. volume" : "47329521",
                     },
                     "2018-03-15" : {
-                        "1. open:"   : "93.5300",
-                        "2. high:"   : "94.5800",
-                        "3. low:"    : "92.8300",
-                        "4. close:"  : "94.1800",
-                        "5. volume:" : "26279014",
+                        "1. open"   : "93.5300",
+                        "2. high"   : "94.5800",
+                        "3. low"    : "92.8300",
+                        "4. close"  : "94.1800",
+                        "5. volume" : "26279014",
                     },
                 }
             }
@@ -189,3 +189,28 @@ class TestAlphaVantage(unittest.TestCase):
                 ),
             ]
         )
+
+    @requests_mock.mock()
+    def test_daily_invalid(self, request_mock):
+        """
+        Test get_daily_time_series() when the request is invalid.
+        """
+
+        request_mock.get(
+            alpha_vantage.URL + "function={0}&symbol={1}&outputsize={2}&apikey={3}".format(
+                "TIME_SERIES_DAILY",
+                "MSFT",
+                "compact",
+                alpha_vantage.API_KEY,
+            ),
+            status_code=200,
+            json={
+                "Error Message": "Invalid API call."
+            }
+        )
+
+        with self.assertRaises(Exception):
+            alpha_vantage.get_daily_time_series(
+                "MSFT",
+                alpha_vantage.TimeSeriesOutputSize.COMPACT
+            )

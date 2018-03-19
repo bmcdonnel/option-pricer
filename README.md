@@ -8,6 +8,8 @@ Pricing information about underlyings is currently using a free HTTP-based API p
 There are multiple variants of binomial pricing models, each differing in its definition of the 3 key input variables. The plan for this project is to implement both [Cox-Russ-Rubinstein](http://www.goddardconsulting.ca/option-pricing-binomial-index.html#crr) and [Jarrow-Rudd](http://www.goddardconsulting.ca/option-pricing-binomial-alts.html#jr) variants.
 
 # TODO
+- More logging
 - Cox-Russ-Rubinstein implementation
 - Jarrow-Rudd implementation
 - GUI for displaying the tree?
+- Postgres data store for tracking model runs?

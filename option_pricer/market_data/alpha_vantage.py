@@ -5,6 +5,7 @@ Alpha Vantage market data implementation.
 from datetime import datetime, timedelta
 from enum import Enum
 
+import logging
 import requests
 
 from option_pricer.market_data.quote import Quote, TimeSeriesQuote
@@ -82,7 +83,7 @@ def get_intraday_time_series(symbol, interval):
             )
         )
 
-    query_string = "function={0}&symbols={1}&interval={2}&apikey={3}".format(
+    query_string = "function={0}&symbol={1}&interval={2}&apikey={3}".format(
         "TIME_SERIES_INTRADAY",
         symbol,
         interval.value,
@@ -98,7 +99,7 @@ def get_intraday_time_series(symbol, interval):
 
     return [_time_series_quote_from_json(transform(k), v, duration) for k, v in series.items()]
 
-def get_daily_time_series(symbol, output_size):
+def get_daily_time_series(symbol, output_size=TimeSeriesOutputSize.COMPACT):
     """
     For the given symbol, get a time series of prices for the current (or
     most recent) trading day with the specified output size.
@@ -115,7 +116,7 @@ def get_daily_time_series(symbol, output_size):
             )
         )
 
-    query_string = "function={0}&symbols={1}&outputsize={2}&apikey={3}".format(
+    query_string = "function={0}&symbol={1}&outputsize={2}&apikey={3}".format(
         "TIME_SERIES_DAILY",
         symbol,
         output_size.value,
@@ -138,12 +139,14 @@ def _send_get(query_string):
         query_string (str): the endpoint and query parameters
     """
 
+    logging.debug(URL + query_string)
+
     response = requests.get(URL + query_string)
 
-    if response.status_code != 200:
-        raise Exception("bad stuff")
+    if response.status_code == 200 and "Error Message" not in response.json().keys():
+        return response
 
-    return response
+    raise Exception("bad stuff")
 
 def _quote_from_json(json):
     timestamp = datetime.strptime(json["4. timestamp"], "%Y-%m-%d %H:%M:%S")
@@ -152,11 +155,11 @@ def _quote_from_json(json):
     return Quote(timestamp, price)
 
 def _time_series_quote_from_json(timestamp, json, duration):
-    open_price = float(json["1. open:"])
-    high_price = float(json["2. high:"])
-    low_price = float(json["3. low:"])
-    close_price = float(json["4. close:"])
-    volume = float(json["5. volume:"])
+    open_price = float(json["1. open"])
+    high_price = float(json["2. high"])
+    low_price = float(json["3. low"])
+    close_price = float(json["4. close"])
+    volume = float(json["5. volume"])
 
     return TimeSeriesQuote(
         timestamp,
