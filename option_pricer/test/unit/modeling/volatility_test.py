@@ -2,7 +2,7 @@
 Volatility test module.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import unittest
 import math
@@ -32,14 +32,20 @@ class TestVolatilityCalculator(unittest.TestCase):
         Test the VolatilityCalculator using PriceSelectionMethod.OPEN prices.
         """
         quotes = [
-            TimeSeriesQuote(datetime.now(), datetime.now(), 1.5, 0, 0, 0, 0),
-            TimeSeriesQuote(datetime.now(), datetime.now(), 2.5, 0, 0, 0, 0),
-            TimeSeriesQuote(datetime.now(), datetime.now(), 2.5, 0, 0, 0, 0),
-            TimeSeriesQuote(datetime.now(), datetime.now(), 2.75, 0, 0, 0, 0),
-            TimeSeriesQuote(datetime.now(), datetime.now(), 3.25, 0, 0, 0, 0),
-            TimeSeriesQuote(datetime.now(), datetime.now(), 4.75, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 147.82, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 149.5, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 149.78, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 149.86, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 149.93, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 150.89, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 152.39, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 153.74, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 152.79, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 151.23, 0, 0, 0, 0),
+            TimeSeriesQuote(datetime.now(), datetime.now(), 151.78, 0, 0, 0, 0),
         ]
 
         calculator = VolatilityCalculator(quotes, PriceSelectionMethod.OPEN)
 
-        self.assertTrue(math.isclose(calculator.volatility, 1.0810874155219827))
+        self.assertTrue(math.isclose(calculator.volatility, 0.0069594213778736355))
+        self.assertTrue(math.isclose(calculator.annualized_volatility, 0.11047738940856067))

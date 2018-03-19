@@ -41,14 +41,24 @@ class VolatilityCalculator(object):
         PriceSelectionMethod.AVERAGE: lambda q: (q.high + q.low) / 2,
     }
 
-    def __init__(self, quotes, price_selection_method):
+    def __init__(self, quotes, price_selection_method=PriceSelectionMethod.CLOSE):
         self.quotes = quotes
         self.price_selection_method = price_selection_method
         self.volatility = self._calculate_volatility()
         self.annualized_volatility = math.sqrt(TRADING_DAYS_PER_YEAR) * self.volatility
 
-    def _transform(self, quote):
+    def _get_price(self, quote):
         return self.__PRICE_TRANSFORMER.get(self.price_selection_method)(quote)
 
     def _calculate_volatility(self):
-        return stdev([self._transform(q) for q in self.quotes])
+        daily_returns = []
+
+        previous_price = self._get_price(self.quotes[0])
+        for quote in self.quotes[1:]:
+            price = self._get_price(quote)
+            percentage_change = (price / previous_price) - 1
+
+            daily_returns.append(percentage_change)
+            previous_price = price
+
+        return stdev(daily_returns)
