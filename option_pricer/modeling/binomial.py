@@ -50,7 +50,7 @@ class CoxRussRubinstein(object):
 
         quotes = alpha_vantage.get_daily_time_series(underlying)
 
-        logging.info("Got %i quotes for %s", len(quotes), underlying)
+        logging.info("Got %i daily quotes for %s", len(quotes), underlying)
 
         volatility = VolatilityCalculator(quotes).annualized_volatility
 
