@@ -1,5 +1,5 @@
 # Overview
-This project is a simple implementation of a binomial option contract pricing model. Currently there is no UI, only CLI.
+This project is a simple implementation of a binomial option contract pricing model. Currently there is no GUI, only CLI.
 
 # Market Data
 Pricing information about underlyings is currently using a free HTTP-based API provided by IEX Trading [documentation](https://iextrading.com/developer/docs/#getting-started). This is good enough for now, but it may be worth upgrading to a paid real-time market data stream.
