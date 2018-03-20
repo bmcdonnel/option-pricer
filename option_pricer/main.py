@@ -17,7 +17,7 @@ LOG_PATH = "logs"
 str: The path where the log file is stored.
 """
 
-BINOMIAL_VARIANTS = ["CRR", "JR"]
+BINOMIAL_VARIANTS = ["CRR"]
 """
 list: Currently supported binomial pricing model variants
 """
@@ -99,13 +99,6 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--rate",
-        required=True,
-        type=float,
-        help="The current risk-free rate"
-    )
-
-    parser.add_argument(
         "--steps",
         type=int,
         default=100,
@@ -139,11 +132,9 @@ def main():
 
     model_class = {
         "CRR": binomial.CoxRussRubinstein,
-        "JR": binomial.JarrowRudd,
     }.get(args.variant)
 
     model = model_class(
-        args.rate,
         args.steps,
         args.size,
     )
