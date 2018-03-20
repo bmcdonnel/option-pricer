@@ -5,7 +5,7 @@ Binomial pricing model variants and related classes.
 import logging
 from math import exp, sqrt
 
-from option_pricer.market_data import alpha_vantage
+from option_pricer.market_data import iex
 from option_pricer.modeling.volatility import VolatilityCalculator
 
 class CoxRussRubinstein(object):
@@ -48,7 +48,7 @@ class CoxRussRubinstein(object):
             contract_type,
         )
 
-        quotes = alpha_vantage.get_daily_time_series(underlying)
+        quotes = iex.get_time_series_for_symbol(underlying)
 
         logging.info("Got %i daily quotes for %s", len(quotes), underlying)
 
