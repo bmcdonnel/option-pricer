@@ -37,3 +37,6 @@ class Quote(object):
 
         return self.timestamp == other.timestamp and \
                math.isclose(self.price, other.price)
+
+    def __str__(self):
+        return str(self.timestamp) + ": $" + str(self.price)

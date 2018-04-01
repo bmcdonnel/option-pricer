@@ -25,7 +25,33 @@ def get_time_series_for_symbol(symbol, duration="6m"):
 
     response = __send_get(URL + query_string)
 
-    return [__quote_from_json(q) for q in response.json()]
+    def quote_from_json(json):
+        timestamp = datetime.strptime(json["date"], "%Y-%m-%d")
+        price = float(json["close"])
+
+        return Quote(timestamp, price)
+
+    return [quote_from_json(q) for q in response.json()]
+
+def get_quote_for_symbol(symbol):
+    """
+    Get a quote for the given symbol.
+
+    Arguments:
+        symbol (str): the desired stock symbol
+    """
+
+    query_string = "/stock/{0}/quote".format(symbol)
+
+    response = __send_get(URL + query_string)
+
+    def quote_from_json(json):
+        timestamp = datetime.fromtimestamp(float(json["latestUpdate"])/1000)
+        price = float(json["latestPrice"])
+
+        return Quote(timestamp, price)
+
+    return quote_from_json(response.json())
 
 def __send_get(url):
     """
@@ -44,8 +70,3 @@ def __send_get(url):
 
     raise Exception("bad stuff")
 
-def __quote_from_json(json):
-    timestamp = datetime.strptime(json["date"], "%Y-%m-%d")
-    price = float(json["close"])
-
-    return Quote(timestamp, price)
