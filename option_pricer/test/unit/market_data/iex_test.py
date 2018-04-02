@@ -15,20 +15,6 @@ class TestIEX(unittest.TestCase):
     IEX test class.
     """
 
-    def setUp(self):
-        """
-        Test setup logic.
-        """
-
-        pass
-
-    def tearDown(self):
-        """
-        Test tear down logic.
-        """
-
-        pass
-
     @requests_mock.mock()
     def test_time_series_success(self, request_mock):
         """
@@ -95,9 +81,9 @@ class TestIEX(unittest.TestCase):
             iex.get_time_series_for_symbol("AAPL", "6m")
 
     @requests_mock.mock()
-    def test_time_series_failure(self, request_mock):
+    def test_get_quote(self, request_mock):
         """
-        Test get_time_series_for_symbol() when the request fails.
+        Test get_quote_for_symbol() when the request fails.
         """
 
         request_mock.get(

@@ -15,20 +15,6 @@ class TestQuandl(unittest.TestCase):
     Quandl test class.
     """
 
-    def setUp(self):
-        """
-        Test setup logic.
-        """
-
-        pass
-
-    def tearDown(self):
-        """
-        Test tear down logic.
-        """
-
-        pass
-
     @requests_mock.mock()
     def test_current_rate(self, request_mock):
         """

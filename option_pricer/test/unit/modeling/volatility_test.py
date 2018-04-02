@@ -15,18 +15,6 @@ class TestVolatilityCalculator(unittest.TestCase):
     VolatilityCalculator test class.
     """
 
-    def setUp(self):
-        """
-        Test setup logic.
-        """
-        pass
-
-    def tearDown(self):
-        """
-        Test tear down logic.
-        """
-        pass
-
     def test_volatility_calculator(self):
         """
         Test the VolatilityCalculator using PriceSelectionMethod.OPEN prices.
