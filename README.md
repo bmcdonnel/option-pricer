@@ -15,22 +15,26 @@ Clone this repo and make sure you have Python 3 installed. Then, the `run.sh` sc
 Example:
 
 ```bash
-$> ./run.sh --underlying SPY --expiration 2018-04-20 --type C --strike 272.00
+$> ./run.sh --underlying SPY --expiration 2018-04-20 --type C --strike 270.00
+SPY 20180420 270.00 C: $1.6133
 ```
 
-Currently the only output is in `logs/application.log`:
+Log output in `logs/application.log`:
 
 ```bash
 $> tail -f logs/application.log
-2018-03-19 22:19:01,191 INFO Calculating price for SPY 2018-04-20 272.00 C
-2018-03-19 22:19:01,430 INFO Got 124 daily quotes for SPY
-2018-03-19 22:19:03,358 INFO Current interest rate: 0.020800
-2018-03-19 22:19:03,359 INFO SPY volatility: 0.127482
-2018-03-19 22:19:03,359 INFO u: 1.012830, d: 0.987333, p: 0.504972
+2018-04-01 21:39:51,686 INFO Calculating price for SPY 2018-04-20 270.00 C
+2018-04-01 21:39:51,839 INFO Got 125 daily quotes
+2018-04-01 21:39:51,840 INFO SPY volatility: 0.145737
+2018-04-01 21:39:53,601 INFO Current interest rate: 0.020900 per year
+2018-04-01 21:39:53,601 INFO Days to expiration: 18
+2018-04-01 21:39:53,601 INFO Time steps: 100, 0.000718 years/step
+2018-04-01 21:39:53,602 INFO Model inputs: u: 1.003913, d: 0.996102, p: 0.500945
+2018-04-01 21:39:53,722 INFO Underlying price: $263.150000
+2018-04-01 21:39:53,727 INFO Contract price: $1.613319
 ```
 
 # TODO
-- finish Cox-Russ-Rubinstein implementation tree calcs
 - Jarrow-Rudd implementation
 - GUI for displaying the tree?
 - Postgres data store for tracking model runs?

@@ -136,14 +136,23 @@ def main():
 
     model = model_class(
         args.steps,
-        args.size,
     )
 
-    model.price_contract(
+    price = model.price_contract(
         args.underlying,
         args.expiration,
         args.type,
         args.strike,
+    )
+
+    print(
+        "%s %s %.2f %s: $%.4f" % (
+            args.underlying,
+            datetime.strftime(args.expiration, "%Y%m%d"),
+            args.strike,
+            args.type,
+            price
+        )
     )
 
 if __name__ == "__main__":
