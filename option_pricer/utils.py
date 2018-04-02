@@ -1,10 +1,10 @@
 """
-This module contains some utilty functions.
-"""
+This module contains some utilty functions.  """
 
 import logging
 import logging.handlers
 import os
+import requests
 
 def configure_rolling_logger(log_filename):
     """
@@ -35,3 +35,27 @@ def configure_rolling_logger(log_filename):
     logger.addHandler(handler)
 
     return logger
+
+def send_get(url):
+    """
+    Send a GET to the url.
+
+    Arguments:
+        url (str): the endpoint and query parameters
+    """
+
+    logging.debug("GET %s", url)
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        return response
+
+    raise Exception("bad stuff")
+
+def print_tree(tree):
+    for i in range(len(tree)):
+        print_array(tree[i])
+
+def print_array(array):
+    print("".join("%.4f, " % (k) for k in array))

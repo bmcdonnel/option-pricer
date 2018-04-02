@@ -4,10 +4,8 @@ Market Data module using IEX Trading's free API.
 
 from datetime import datetime
 
-import logging
-import requests
-
 from option_pricer.market_data.quote import Quote
+from option_pricer.utils import send_get
 
 URL = "https://api.iextrading.com/1.0"
 
@@ -23,9 +21,12 @@ def get_time_series_for_symbol(symbol, duration="6m"):
 
     query_string = "/stock/{0}/chart/{1}".format(symbol, duration)
 
-    response = __send_get(URL + query_string)
+    response = send_get(URL + query_string)
 
     def quote_from_json(json):
+        """
+        Builds a Quote object from JSON.
+        """
         timestamp = datetime.strptime(json["date"], "%Y-%m-%d")
         price = float(json["close"])
 
@@ -43,30 +44,15 @@ def get_quote_for_symbol(symbol):
 
     query_string = "/stock/{0}/quote".format(symbol)
 
-    response = __send_get(URL + query_string)
+    response = send_get(URL + query_string)
 
     def quote_from_json(json):
+        """
+        Builds a Quote object from JSON.
+        """
         timestamp = datetime.fromtimestamp(float(json["latestUpdate"])/1000)
         price = float(json["latestPrice"])
 
         return Quote(timestamp, price)
 
     return quote_from_json(response.json())
-
-def __send_get(url):
-    """
-    Send a GET to the url.
-
-    Arguments:
-        url (str): the endpoint and query parameters
-    """
-
-    logging.debug("GET %s", url)
-
-    response = requests.get(url)
-
-    if response.status_code == 200:
-        return response
-
-    raise Exception("bad stuff")
-
