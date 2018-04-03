@@ -34,22 +34,22 @@ class TestVolatilityCalculator(unittest.TestCase):
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ]
 
-        initialize_tree(tree, 1, 1, 100)
+        initialize_tree(tree, 2, 0.50, 10)
 
         self.assertEqual(
             tree,
             [
-                [100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [101, 99, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [102, 100, 98, 0, 0, 0, 0, 0, 0, 0, 0],
-                [103, 101, 99, 97, 0, 0, 0, 0, 0, 0, 0],
-                [104, 102, 100, 98, 96, 0, 0, 0, 0, 0, 0],
-                [105, 103, 101, 99, 97, 95, 0, 0, 0, 0, 0],
-                [106, 104, 102, 100, 98, 96, 94, 0, 0, 0, 0],
-                [107, 105, 103, 101, 99, 97, 95, 93, 0, 0, 0],
-                [108, 106, 104, 102, 100, 98, 96, 94, 92, 0, 0],
-                [109, 107, 105, 103, 101, 99, 97, 95, 93, 91, 0],
-                [110, 108, 106, 104, 102, 100, 98, 96, 94, 92, 90],
+                [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [20, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [40, 10, 2.5, 0, 0, 0, 0, 0, 0, 0, 0],
+                [80, 20, 5, 1.25, 0, 0, 0, 0, 0, 0, 0],
+                [160, 40, 10, 2.5, 0.625, 0, 0, 0, 0, 0, 0],
+                [320, 80, 20, 5, 1.25, 0.3125, 0, 0, 0, 0, 0],
+                [640, 160, 40, 10, 2.5, 0.625, 0.15625, 0, 0, 0, 0],
+                [1280, 320, 80, 20, 5, 1.25, 0.3125, 0.078125, 0, 0, 0],
+                [2560, 640, 160, 40, 10, 2.5, 0.625, 0.15625, 0.0390625, 0, 0],
+                [5120, 1280, 320, 80, 20, 5, 1.25, 0.3125, 0.078125, 0.01953125, 0],
+                [10240, 2560, 640, 160, 40, 10, 2.5, 0.625, 0.15625, 0.0390625, 0.009765625],
             ]
         )
 
@@ -80,35 +80,6 @@ class TestVolatilityCalculator(unittest.TestCase):
 
         initialize_tree(tree, u, d, current_underlying_price)
 
-        """
-        self.assertEqual(
-            calculate_contract_price(tree, "C", contract_strike_price, p, 0.05, 0.01),
-            1.628
-        )
-        """
+        contract_price = calculate_contract_price(tree, "C", contract_strike_price, p, 0.05, 0.01)
 
-    def test_simple_contract_calc(self):
-
-        """
-        Test time step duration calculation.
-        """
-
-        steps = 5
-
-        u = 1.0512710963760241
-        d = 0.9512294245007139
-        p = 0.49250177047752547
-
-        tree = [[0 for x in range(steps + 1)] for y in range(steps + 1)]
-
-        current_underlying_price = 50
-        contract_strike_price = 51
-
-        initialize_tree(tree, u, d, current_underlying_price)
-
-        """
-        self.assertEqual(
-            calculate_contract_price(tree, "C", contract_strike_price, p, 0.05, 0.01),
-            1.628
-        )
-        """
+        self.assertEqual(round(contract_price, 6), 1.627916)

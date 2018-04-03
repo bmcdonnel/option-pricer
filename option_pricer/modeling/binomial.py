@@ -56,7 +56,7 @@ def initialize_tree(price_tree, up, down, current_price):
 
     for i in range(1, size):
         for j in range(i + 1):
-            price_tree[i][j] = current_price + ((i - j) * up) - (j * down)
+            price_tree[i][j] = current_price * pow(up, i - j) * pow(down, j)
 
 def calculate_contract_price(
         price_tree,
