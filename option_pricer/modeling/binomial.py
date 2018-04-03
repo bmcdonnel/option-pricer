@@ -44,8 +44,8 @@ def initialize_tree(price_tree, up, down, current_price):
 
     Arguments:
         price_tree (list): 2 dimensional array/list
-        up (float): the dollar amount that the underlying will move up each step
-        down (float): the dollar amount that the underlying will move down each step
+        up (float): the percentage that the underlying will move up each step
+        down (float): the percentage that the underlying will move down each step
         current_price (float): the current price of the underlying from which the
             binomial tree will start
     """
@@ -196,6 +196,10 @@ class CoxRussRubinstein(object):
                                       in the interval [0.0, 1.0]
             time_step_duration (float): time duration of a single time step in the model expressed
                                         as a fraction of a year
+        Returns:
+            up (float): the percentage that the underlying moves up in the tree
+            down (float): the percentage that the underlying moves down in the tree
+            probability (float): the probability of the underlying moving in either direction
         """
 
         up = exp(volatility * sqrt(time_step_duration))
