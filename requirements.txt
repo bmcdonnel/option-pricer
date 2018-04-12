@@ -1,0 +1,7 @@
+pylint
+nose
+mock
+pyyaml
+requests
+requests-mock
+websockets
