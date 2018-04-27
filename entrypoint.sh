@@ -33,4 +33,6 @@ wait_for_db() {
 
 wait_for_db
 
+python manage.py flush --noinput && python manage.py migrate
+
 exec "$@"
