@@ -4,7 +4,7 @@ build:
 	docker-compose build
 
 console: build
-	docker-compose run -v $(PWD):/home/option_pricer -p 9090:9090 app /bin/bash
+	docker-compose run -v $(PWD):/home/option_pricer -p 8000:8000 app /bin/bash
 
 run:
 	docker-compose up --build
