@@ -1,8 +1,10 @@
 pylint
 nose
 mock
-pyyaml
 requests
 requests-mock
 django
 psycopg2-binary
+celery
+celery[redis]
+redis

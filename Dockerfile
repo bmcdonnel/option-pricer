@@ -11,7 +11,5 @@ ENV APP_HOME=/home/option_pricer
 WORKDIR $APP_HOME
 ADD . $APP_HOME
 
-COPY entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["entrypoint.sh"]
-
-CMD ["python", "-m", "option_pricer.main"]
+COPY entrypoint_web.sh /usr/local/bin/
+COPY entrypoint_worker.sh /usr/local/bin/

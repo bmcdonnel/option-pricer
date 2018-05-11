@@ -43,7 +43,6 @@ Log output goes to `logs/application.log`
 ## Phase 1: Realtime contract viewer
 - Consume realtime IEX market data via websocket client
 - Recalculate a single contract in realtime
-- Flask server
 - Push contract updates to browser via websockets
 - 24/7 up-time service
 
